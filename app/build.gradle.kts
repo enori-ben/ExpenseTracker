@@ -6,8 +6,6 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.serialization)
     alias(libs.plugins.google.services)
-    //alias(libs.plugins.google.services)
-
 }
 
 android {
@@ -20,6 +18,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+        multiDexEnabled = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,24 +32,32 @@ android {
             )
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11 //Changed to JavaVersion 11
+        targetCompatibility = JavaVersion.VERSION_11 //Changed to JavaVersion 11
     }
     kotlinOptions {
         jvmTarget = "11"
+        freeCompilerArgs = freeCompilerArgs + "-Xdebug"
     }
+
     buildFeatures {
         compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.3"
     }
 }
 
 dependencies {
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
-    implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
-    implementation ("androidx.compose.material3:material3:1.3.1")
-    implementation ("androidx.compose.material:material-icons-extended:1.6.0")
-    implementation ("androidx.navigation:navigation-compose:2.7.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+    implementation ("androidx.compose.material3:material3:1.3.2")
+    implementation ("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation ("androidx.navigation:navigation-compose:2.8.9")
     implementation ("com.google.accompanist:accompanist-navigation-animation:0.34.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -65,6 +72,9 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.constraintlayout.core)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(libs.generativeai)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -83,7 +93,17 @@ dependencies {
 
     // Coil image loading library for Compose to load and display images efficiently
     implementation(libs.io.coil.kt.compose)
-
+    implementation (libs.androidx.camera.core.v130)
+    implementation (libs.androidx.camera.camera2)
+    implementation (libs.androidx.camera.lifecycle.v130)
+    implementation (libs.androidx.camera.view.v130)
+    implementation (libs.text.recognition)
+    implementation (libs.androidx.lifecycle.viewmodel.compose)
+    implementation (libs.androidx.lifecycle.viewmodel.ktx)
+    implementation (libs.androidx.lifecycle.livedata.ktx)
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation (libs.logging.interceptor)
     //Dagger Hilt
     implementation(libs.dagger.hilt)
     kapt(libs.dagger.hilt.compiler)
@@ -92,14 +112,17 @@ dependencies {
     //Navigation compose
     implementation(libs.androidx.navigation.compose)
 
+    implementation("com.google.android.gms:play-services-location:21.1.0")
 
     //firebase
 
-//    implementation(platform(libs.google.firebase.bom))
-//    implementation(libs.google.firebase.analytics.ktx)
-//    implementation(libs.google.firebase.auth.ktx)
-//    implementation(libs.google.firebase.firestore.ktx)
-
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.analytics.ktx)
+    implementation(libs.google.firebase.auth.ktx)
+    implementation(libs.google.firebase.firestore.ktx)
+    implementation ("com.github.AnyChart:AnyChart-Android:1.1.4")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation ("androidx.multidex:multidex:2.0.1")
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -112,4 +135,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("com.google.firebase:firebase-database-ktx:21.0.0")
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.31.5-beta")
+//    implementation("ir.mahozad.android:pie-chart:0.7.0")
+
+//    implementation ("com.himanshoe:charty:1.0.0")
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+
+    // Add charts dependency here
+//    implementation(libs.charts)
 }

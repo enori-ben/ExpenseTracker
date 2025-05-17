@@ -13,3 +13,18 @@
 .externalNativeBuild
 .cxx
 local.properties
+*.keystore
+
+# Firebase config
+app/google-services.json
+
+# Jetpack Compose preview cache
+.idea/compose-preview/
+
+# Android Studio Navigation Editor temp files
+.navigation/
+
+# Others
+*.log
+*.apk
+*.aar

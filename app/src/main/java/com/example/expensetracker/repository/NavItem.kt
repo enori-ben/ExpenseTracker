@@ -1,5 +1,4 @@
-// ملف: app/src/main/java/com/example/expensetracker/navigation/NavItem.kt
-package com.example.expensetracker.navigation
+package com.example.expensetracker.repository
 
 import androidx.compose.ui.graphics.painter.Painter
 

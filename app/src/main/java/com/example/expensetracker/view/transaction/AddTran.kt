@@ -37,28 +37,41 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.expensetracker.data.CategoryGrid
-import com.example.expensetracker.repository.Routes
+import androidx.compose.ui.text.TextStyle
+import com.example.expensetracker.view.TransactionViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AddTran(navController: NavController) {
+fun AddTran(
+    navController: NavController,
+    viewModel: TransactionViewModel,
+    editId: String?
+) {
+    val transaction = remember(editId) {
+        editId?.let { id -> viewModel.transactions.value.find { it.id == id } }
+    }
 
-    val viewModel: TransactionViewModel = viewModel()
-    println("ViewModel instance: $viewModel")
-
-    // حالات التطبيق
-    val focusManager = LocalFocusManager.current
     var selectedCategory by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var transactionType by remember { mutableStateOf("EXPENSE") }
-    val focusState = remember { FocusRequester() }
+
+    LaunchedEffect(transaction) {
+        transaction?.let {
+            amount = it.amount.toString()
+            selectedCategory = it.category
+            transactionType = if (it.isExpense) "EXPENSE" else "INCOME"
+            selectedDate = it.date
+        }
+    }
+
+    val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val focusRequester = remember { FocusRequester() }
@@ -67,25 +80,21 @@ fun AddTran(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.LightGray)
-            .clickable { focusManager.clearFocus() }
+            .background(Color(0xFFF5F6FA))
             .verticalScroll(rememberScrollState())
     ) {
         // Header Section
         Card(
-            shape = RoundedCornerShape(40.dp),
-
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF1A180A)
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp)
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp),
+            elevation = CardDefaults.cardElevation(10.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xEB16292F))
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 45.dp),
+
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
@@ -100,12 +109,18 @@ fun AddTran(navController: NavController) {
                 }
 
                 Text(
-                    "Add Transaction",
+                    text = if (editId != null) "Edit Transaction" else "Add Transaction",
+                    fontSize = 25.sp,
+                    style = TextStyle(
+                        shadow = Shadow(
+                            color = Color.Black.copy(alpha = 0.4f),
+                            offset = Offset(0f, 10f),
+                            blurRadius = 8f
+                        )
+                    ),
+                    modifier = Modifier.padding(start = 65.dp),
+                    color = Color.White  )
 
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(start = 80.dp),
-                    color = Color.White
-                )
             }
             Spacer(modifier = Modifier.height(30.dp))
 
@@ -116,23 +131,19 @@ fun AddTran(navController: NavController) {
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                TransactionTypeButton(
-                    text = "EXPENSE",
+                TransactionTypeButton(text = "EXPENSE",
                     isSelected = transactionType == "EXPENSE",
                     color = Color(0xFFF44336),
                     onClick = {
                         transactionType = "EXPENSE"
-                    }
-                )
+                    })
 
-                TransactionTypeButton(
-                    text = "INCOME",
+                TransactionTypeButton(text = "INCOME",
                     isSelected = transactionType == "INCOME",
                     color = Color(0xFF4CAF50),
                     onClick = {
                         transactionType = "INCOME"
-                    }
-                )
+                    })
             }
         }
 
@@ -144,17 +155,14 @@ fun AddTran(navController: NavController) {
                 .padding(vertical = 26.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            TextField(
-                value = amount,
+            TextField(value = amount,
                 onValueChange = { amount = it },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 100.dp)
                     .focusRequester(focusRequester),
                 textStyle = LocalTextStyle.current.copy(
-                    textAlign = TextAlign.Center,
-                    fontSize = 24.sp,
-                    color = Color.Black
+                    textAlign = TextAlign.Center, fontSize = 24.sp, color = Color.Black
                 ),
                 placeholder = {
                     if (amount.isEmpty() && !isFocused) {
@@ -184,15 +192,11 @@ fun AddTran(navController: NavController) {
                     cursorColor = Color(0xFF040401)
                 ),
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
+                    keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
                 ),
-                keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
-                ),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                 singleLine = true,
-                interactionSource = interactionSource
-            )
+                interactionSource = interactionSource)
         }
 
 
@@ -205,90 +209,72 @@ fun AddTran(navController: NavController) {
                 color = Color.DarkGray
             )
 
-            CategoryGrid(
-                categories = categories,
+            CategoryGrid(categories = categories,
                 selectedCategory = selectedCategory,
-                onCategorySelected = { newCategory ->
-                    if (newCategory == "Create") {
-                        navController.navigate(Routes.CREATE_CATEGORY)
-                    } else {
-                        selectedCategory = newCategory
-                    }
-                }
-            )
+                onCategorySelected = {
+                    selectedCategory = it
+                })
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
 
         // Date Selection
         DateSelector(
             selectedDate = selectedDate,
-            onDateSelected = { newDate -> selectedDate = newDate }
+            onDateSelected = { selectedDate = it }
         )
 
         // Save Button
+
         Button(
             onClick = {
-                focusManager.clearFocus() // إخفاء لوحة المفاتيح
+                focusManager.clearFocus()
+                val amountValue = amount.toDoubleOrNull() ?: return@Button
 
-                val amountValue = amount.toDoubleOrNull() ?: run {
-                    println("خطأ: المبلغ غير صحيح")
-                    return@Button
+                if (editId != null) {
+                    viewModel.updateTransaction(
+                        transactionId = editId,
+                        newAmount = amountValue,
+                        newIsExpense = transactionType == "EXPENSE",
+                        newCategory = selectedCategory,
+                        newDate = selectedDate
+                    )
+                } else {
+                    viewModel.addTransaction(
+                        amount = amountValue,
+                        isExpense = transactionType == "EXPENSE",
+                        category = selectedCategory,
+                        date = selectedDate
+                    )
                 }
-                viewModel.addTransaction(
-                    amount = amountValue,
-                    isExpense = transactionType == "EXPENSE",
-                    category = selectedCategory,
-                    date = selectedDate
-                )
-
-                // استبدل هذا:
-                // navController.popBackStack()
-
-                // بهذا الحل الأفضل:
                 navController.popBackStack()
-                navController.navigate(Routes.HOME_SCREEN) {
-                    // هذه الإعدادات تضمان إعادة إنشاء HomeScreen
-                    launchSingleTop = true
-                    restoreState = true
-                }
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(126.dp),
-            shape = RoundedCornerShape(20.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFFFBB0C),
-                contentColor = Color.Black
+                containerColor = Color(0xFFFFBB0C)
             )
         ) {
-            Text("Add", fontSize = 16.sp)
+            Text(if (editId != null) "Update" else "Add")
         }
     }
 }
 
 @Composable
 fun TransactionTypeButton(
-    text: String,
-    isSelected: Boolean,
-    color: Color,
-    onClick: () -> Unit
+    text: String, isSelected: Boolean, color: Color, onClick: () -> Unit
 ) {
-    Card(
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) 8.dp else 4.dp
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) color else Color.LightGray
-        ),
-        modifier = Modifier
-            .width(120.dp)
-            .height(50.dp)
-            .clickable { onClick() }
-    ) {
+    Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(
+        defaultElevation = if (isSelected) 8.dp else 4.dp
+    ), colors = CardDefaults.cardColors(
+        containerColor = if (isSelected) color else Color.LightGray
+    ), modifier = Modifier
+        .width(120.dp)
+        .height(50.dp)
+        .clickable { onClick() }) {
         Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
+            contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
 
         ) {
             Text(
@@ -305,8 +291,7 @@ fun TransactionTypeButton(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateSelector(
-    selectedDate: LocalDate,
-    onDateSelected: (LocalDate) -> Unit
+    selectedDate: LocalDate, onDateSelected: (LocalDate) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     val dateFormatter = remember { DateTimeFormatter.ofPattern("MMM dd, yyyy") }
@@ -325,8 +310,7 @@ fun DateSelector(
             style = MaterialTheme.typography.bodyLarge
         )
         IconButton(
-            onClick = { showDatePicker = true },
-            modifier = Modifier.size(48.dp)
+            onClick = { showDatePicker = true }, modifier = Modifier.size(48.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.CalendarMonth,
@@ -337,8 +321,7 @@ fun DateSelector(
     }
 
     if (showDatePicker) {
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
+        DatePickerDialog(onDismissRequest = { showDatePicker = false },
             colors = DatePickerDefaults.colors(
                 containerColor = Color.White,
                 headlineContentColor = Color.Black,
@@ -354,26 +337,21 @@ fun DateSelector(
                             onDateSelected(newDate)
                         }
                         showDatePicker = false
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF070000),
-                        contentColor = Color.White
+                    }, colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF070000), contentColor = Color.White
                     )
                 ) {
                     Text("confirm")
                 }
-            }
-        ) {
+            }) {
             DatePicker(
-                state = datePickerState,
-                title = {
+                state = datePickerState, title = {
                     Text(
-                        "اختر التاريخ",
+                        "",
                         style = MaterialTheme.typography.headlineSmall,
                         modifier = Modifier.padding(16.dp)
                     )
-                },
-                showModeToggle = true
+                }, showModeToggle = true
             )
         }
     }

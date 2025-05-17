@@ -24,22 +24,21 @@ fun CategoryItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val imageSize = 65.dp // حجم الصورة ثابت في كلتا الحالتين
+    val imageSize = 65.dp
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .padding(8.dp)
-            .width(80.dp) // اضبطها حسب الحاجة
+            .width(80.dp)
     ) {
         if (isSelected) {
-            // الحالة المختارة: عرض مربع يحتوي على الصورة والنص معًا
             Box(
                 modifier = Modifier
-                    .size(90.dp)
+                    .size(95.dp)
                     .clickable { onClick() }
                     .background(
                         color = Color.LightGray,
-                        shape = RoundedCornerShape(6.dp)
+                        shape = RoundedCornerShape(10.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -62,7 +61,6 @@ fun CategoryItem(
                 }
             }
         } else {
-            // الحالة الافتراضية: عرض دائرة تحتوي على الصورة والنص تحتها
             Box(
                 modifier = Modifier
                     .size(50.dp)
