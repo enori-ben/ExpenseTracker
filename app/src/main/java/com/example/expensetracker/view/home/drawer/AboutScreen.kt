@@ -140,7 +140,7 @@ fun AboutScreen(navController: NavController) { // تم إضافة NavController
         ) {
             Button(
                 onClick = {
-                    val url = "https://github.com/enori-ben/Expense-Tracker"
+                    val url = "https://github.com/enori-ben/ExpenseTracker"
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     context.startActivity(intent)
                 }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF000000))
