@@ -40,7 +40,7 @@ import androidx.navigation.NavController
 import com.example.expensetracker.R
 
 @Composable
-fun AboutScreen(navController: NavController) { // تم إضافة NavController كمعامل
+fun AboutScreen(navController: NavController) {
     val context = LocalContext.current
     Column(
         modifier = Modifier

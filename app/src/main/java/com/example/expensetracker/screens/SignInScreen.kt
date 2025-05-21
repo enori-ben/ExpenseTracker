@@ -88,14 +88,15 @@ fun SignInScreen(navController: NavController) {
             }
             return
         }
+
         loading = true
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 loading = false
                 coroutineScope.launch {
                     if (task.isSuccessful) {
-                        snackbarHostState.showSnackbar("Reset link sent to your email.")
                         showForgotPassword = false
+                        snackbarHostState.showSnackbar("Reset link sent to $email.")
                     } else {
                         snackbarHostState.showSnackbar(
                             task.exception?.localizedMessage ?: "Error sending reset email"
@@ -105,9 +106,14 @@ fun SignInScreen(navController: NavController) {
             }
     }
 
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
                 .background(Color.White),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -129,7 +135,7 @@ fun SignInScreen(navController: NavController) {
                 ResponsiveTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = "Enter Email",
+                    label = if (showForgotPassword) "Enter your email to reset password" else "Enter Email",
                     iconRes = R.drawable.ic_email,
                     keyboardType = KeyboardType.Email,
 
@@ -141,7 +147,7 @@ fun SignInScreen(navController: NavController) {
                     ResponsiveTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = "Enter Email",
+                        label = "Enter Password",
                         iconRes = R.drawable.ic_password,
                         keyboardType = KeyboardType.Password,
                         isPassword = true,
@@ -244,7 +250,7 @@ fun SignInScreen(navController: NavController) {
                         fontWeight = FontWeight.SemiBold
                     )
                 }
-            }
+            }}
         }
 
 }
