@@ -1,30 +1,61 @@
+# Android Studio & IntelliJ
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+.idea/
+.idea/compose-preview/
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# Build files
+.gradle/
+build/
+.cxx/
+.externalNativeBuild/
+captures/
+.navigation/
+*.log
+
+# Local configuration
 local.properties
+/local.properties
 *.keystore
 
-# Firebase config
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Linux
+*~
+
+# Kotlin & Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Firebase
 app/google-services.json
 
-# Jetpack Compose preview cache
+# Jetpack Compose Preview cache (redundant, but for clarity)
 .idea/compose-preview/
 
-# Android Studio Navigation Editor temp files
-.navigation/
-
-# Others
-*.log
+# Output
 *.apk
 *.aar
+
+# VSCode or other editors (if used)
+.vscode/
+
+# Misc
+*.tmp
+*.bak
+*.swp
+
+# Ignore files mistakenly created by mistyped git commands
+e -i HEAD~20
+et --soft 7562b93^
