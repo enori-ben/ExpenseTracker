@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.expensetracker.model.InvoiceResult
+import com.example.expensetracker.view.scan.tryParseDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -55,18 +56,21 @@ class TransactionViewModel(
         manualDescription: String = "",
         invoiceDetails: InvoiceResult? = null
     ) {
-
-
         if (amount <= 0) return
+
+        // تأكد من حفظ التاريخ بتنسيق موحد (ISO)
+        val standardizedDate = date
+
         val tx = Transaction(
             amount = amount,
             isExpense = isExpense,
             category = if (isExpense) category else "Income",
-            date = date,
+            date = standardizedDate,
             vendorName = vendorName,
             manualDescription = manualDescription,
             invoiceDetails = invoiceDetails
         )
+
         _transactions.update { it + tx }
         recalculateTotals()
         saveAllStates()
@@ -125,6 +129,7 @@ class TransactionViewModel(
         }
     }
 
+
     private fun recalculateTotals() {
         var income = 0.0
         var expense = 0.0
@@ -149,3 +154,32 @@ class TransactionViewModel(
         savedStateHandle["expense"]      = _totalExpense.value
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    fun searchTransactionsByDate(searchDate: String): List<Transaction> {
+//        val queryDate = tryParseDate(searchDate)
+//        return _transactions.value.filter { it.date == queryDate }
+//    }
+//
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    fun searchTransactionsByPeriod(startDateStr: String, endDateStr: String): List<Transaction> {
+//        val startDate = tryParseDate(startDateStr)
+//        val endDate = tryParseDate(endDateStr)
+//        return _transactions.value.filter {
+//            it.date in startDate..endDate
+//        }
+//    }

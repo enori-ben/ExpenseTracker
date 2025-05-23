@@ -37,8 +37,8 @@ fun DrawerScreen(
     onClose: () -> Unit,
     navController: NavController,
     totalBalance: Double,
-    drawerState: DrawerState, // إضافة المعلمة الجديدة
-    scope: CoroutineScope // إضافة المعلمة الجديدة
+    drawerState: DrawerState,
+    scope: CoroutineScope
 ) {
     val auth = Firebase.auth
     val currentUser = auth.currentUser
@@ -102,7 +102,7 @@ fun DrawerScreen(
                 iconRes = R.drawable.home,
                 onClick = {
                     navController.navigate(Routes.MAIN_SCREEN) {
-                        launchSingleTop = true
+//                        launchSingleTop = true
                         restoreState = true
                         popUpTo(navController.graph.startDestinationId)
                     }
@@ -115,7 +115,7 @@ fun DrawerScreen(
                 onClick = {
                     scope.launch {
                         drawerState.close()
-                        delay(200) // انتظر قليلاً لإغلاق الدراور قبل التنقل
+                        delay(200)
                     }
                     navController.navigate(Routes.SCANNING_SCREEN) {
                         launchSingleTop = true
@@ -131,7 +131,7 @@ fun DrawerScreen(
                 onClick = {
                     scope.launch {
                         drawerState.close()
-                        delay(200) // انتظر قليلاً لإغلاق الدراور قبل التنقل
+                        delay(200)
                     }
                     navController.navigate(Routes.STATS_SCREEN) {
                         launchSingleTop = true
@@ -145,7 +145,7 @@ fun DrawerScreen(
                 onClick = {
                     scope.launch {
                         drawerState.close()
-                        delay(200) // انتظر قليلاً لإغلاق الدراور قبل التنقل
+                        delay(200)
                     }
                     navController.navigate("add_transaction") {
                         launchSingleTop = true

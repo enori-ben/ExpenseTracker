@@ -2,6 +2,7 @@ package com.example.expensetracker.view.home.drawer
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -108,9 +109,9 @@ fun AboutScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF)),
-                elevation = CardDefaults.cardElevation(2.dp)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE1C7A1)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
             ) {
                 Text(
                     text = featureText,

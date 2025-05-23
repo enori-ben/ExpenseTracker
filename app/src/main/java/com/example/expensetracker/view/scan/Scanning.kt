@@ -468,7 +468,7 @@ suspend fun extractDescriptionFromImage(
     }
 
     val invoiceResult: InvoiceResult? = try {
-        // تنظيف النص باستخدام regex
+//        Regex
         val jsonRegex = """(?s)\{.*\}""".toRegex()
         val cleanedText = jsonRegex.find(extractedText)?.value?.let {
             it.replace("```json", "")
@@ -487,7 +487,7 @@ suspend fun extractDescriptionFromImage(
         null
     }
 
-    // تمرير النتيجة إلى callback
+    //  callback
     onInvoiceParsed(invoiceResult)
 
     return extractedText
@@ -546,21 +546,25 @@ fun reduceBitmapSize(
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun tryParseDate(dateStr: String): LocalDate? {
+fun tryParseDate(dateStr: String): LocalDate {
     val formatters = listOf(
-        DateTimeFormatter.ofPattern("yyyy-dd-MM"),
+        DateTimeFormatter.ofPattern("yyyy-MM-dd"),
         DateTimeFormatter.ofPattern("dd-MM-yyyy"),
+        DateTimeFormatter.ofPattern("MM-dd-yyyy"),
+        DateTimeFormatter.ofPattern("dd/MM/yyyy"),
         DateTimeFormatter.ofPattern("MM/dd/yyyy"),
-        DateTimeFormatter.ISO_LOCAL_DATE
+        DateTimeFormatter.ofPattern("yyyy/MM/dd")
     )
 
-    return formatters.firstNotNullOfOrNull { formatter ->
+
+    formatters.forEach { formatter ->
         try {
-            LocalDate.parse(dateStr, formatter)
+            return LocalDate.parse(dateStr, formatter)
         } catch (e: Exception) {
-            null
+
         }
     }
+    return LocalDate.now()
 }
 
 
@@ -675,10 +679,7 @@ fun ProductScanningScreen(
                 Button(
                     onClick = {
                         invoiceResult?.let { result ->
-                            val parsedDate = tryParseDate(result.date) ?: run {
-                                Toast.makeText(context, "Invalid date format, using invoice date as-is", Toast.LENGTH_LONG).show()
-                                LocalDate.parse(result.date, DateTimeFormatter.ISO_LOCAL_DATE)
-                            }
+                            val parsedDate = tryParseDate(result.date)
 
                             val safeTotal = result.total.takeIf { it > 0 } ?: result.items.sumOf { it.totalPrice }
 
@@ -690,6 +691,12 @@ fun ProductScanningScreen(
                                 manualDescription = editedText,
                                 invoiceDetails = result
                             )
+
+                            Toast.makeText(
+                                context,
+                                "تم حفظ الفاتورة في تاريخ: ${parsedDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                         showConfirmationDialog = false
                         onConfirm()

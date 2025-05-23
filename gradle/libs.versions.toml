@@ -1,5 +1,5 @@
 [versions]
-agp = "8.9.2"
+agp = "8.10.0"
 cameraCoreVersion = "1.3.0"
 cameraLifecycleVersion = "1.3.0"
 cameraViewVersion = "1.3.0"
